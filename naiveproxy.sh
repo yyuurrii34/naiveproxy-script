@@ -64,9 +64,14 @@ installProxy(){
     ${PACKAGE_INSTALL[int]} curl wget sudo qrencode
 
     rm -f /usr/bin/caddy
-    wget https://gitlab.com/misakablog/naiveproxy-script/-/raw/main/files/caddy-linux-$(archAffix) -O /usr/bin/caddy
-    chmod +x /usr/bin/caddy
-
+    #files not available on gitlab now
+    #wget https://gitlab.com/misakablog/naiveproxy-script/-/raw/main/files/caddy-linux-$(archAffix) -O /usr/bin/caddy
+    #chmod +x /usr/bin/caddy
+    
+    wget https://github.com/blog-misaka/naiveproxy-script/releases/download/caddy/caddy-linux-$(archAffix).tar.gz
+    tar -zxvf caddy-linux-$(archAffix).tar.gz -C /usr/bin
+    rm -f caddy-linux-$(archAffix).tar.gz
+    
     mkdir /etc/caddy
     
     read -rp "请输入需要使用在NaiveProxy的域名：" domain
