@@ -75,7 +75,7 @@ installProxy(){
     
     #新的直接编译法
     ## 下载 GO 最新版
-    wget "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz"
+    wget "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text|rep go).linux-amd64.tar.gz"
     
     ## 解压至/usr/local/
     tar -xf go*.linux-amd64.tar.gz -C /usr/local/
