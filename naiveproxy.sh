@@ -62,14 +62,37 @@ installProxy(){
         ${PACKAGE_UPDATE[int]}
     fi
     ${PACKAGE_INSTALL[int]} curl wget sudo qrencode
-
+    
+    #获取caddy
     rm -f /usr/bin/caddy
+    
+    #旧的下载法
     #wget https://gitlab.com/misakablog/naiveproxy-script/-/raw/main/files/caddy-linux-$(archAffix) -O /usr/bin/caddy
     #chmod +x /usr/bin/caddy
-    wget https://github.com/blog-misaka/naiveproxy-script/releases/download/caddy/caddy-linux-$(archAffix).tar.gz
-    tar -zxvf caddy-linux-$(archAffix).tar.gz -C /usr/bin
-    rm -f caddy-linux-$(archAffix).tar.gz
+    #wget https://github.com/blog-misaka/naiveproxy-script/releases/download/caddy/caddy-linux-$(archAffix).tar.gz
+    #tar -zxvf caddy-linux-$(archAffix).tar.gz -C /usr/bin
+    #rm -f caddy-linux-$(archAffix).tar.gz
     
+    #新的直接编译法
+    ## 下载 GO 最新版
+    wget "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz"
+    
+    ## 解压至/usr/local/
+    tar -xf go*.linux-amd64.tar.gz -C /usr/local/
+
+    ## 添加 Go 环境变量:
+    echo 'export GOROOT=/usr/local/go' >> /etc/profile
+    echo 'export PATH=$GOROOT/bin:$PATH' >> /etc/profile
+
+    ## 使变量立即生效
+    source /etc/profile
+    
+    ## 编译 Caddy
+    go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+    ~/go/bin/xcaddy build --with github.com/caddyserver/forwardproxy@caddy2=github.com/klzgrad/forwardproxy@naive
+    mv caddy /usr/bin
+
+    #设置caddy
     mkdir /etc/caddy
     
     read -rp "请输入需要使用在NaiveProxy的域名：" domain
