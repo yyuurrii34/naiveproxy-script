@@ -103,7 +103,7 @@ installProxy(){
     
     cat << EOF >/etc/caddy/Caddyfile
 :443, $domain
-tls admin@seewo.com
+tls administratorsA@esivh.com
 route {
  forward_proxy {
    basic_auth $proxyname $proxypwd
