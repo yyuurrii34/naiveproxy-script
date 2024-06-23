@@ -88,8 +88,10 @@ installProxy(){
     source /etc/profile
     
     ## 编译 Caddy
+    #go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+    #~/go/bin/xcaddy build --with github.com/caddyserver/forwardproxy@caddy2=github.com/klzgrad/forwardproxy@naive
     go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
-    ~/go/bin/xcaddy build --with github.com/caddyserver/forwardproxy@caddy2=github.com/klzgrad/forwardproxy@naive
+    ~/go/bin/xcaddy build --with github.com/caddyserver/forwardproxy=github.com/klzgrad/forwardproxy@naive
     mv caddy /usr/bin
 
     #设置caddy
@@ -111,11 +113,11 @@ route {
    hide_via
    probe_resistance
   }
- #reverse_proxy  https://demo.cloudreve.org  {
- #  header_up  Host  {upstream_hostport}
- #  header_up  X-Forwarded-Host  {host}
- # }
- reverse_proxy 127.0.0.1:8888
+ reverse_proxy  https://news.ycombinator.com  {
+   header_up  Host  {upstream_hostport}
+   header_up  X-Forwarded-Host  {host}
+  }
+ #reverse_proxy 127.0.0.1:8888
 }
 EOF
 
