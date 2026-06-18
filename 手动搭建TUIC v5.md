@@ -187,12 +187,7 @@ cat /etc/letsencrypt/live/your.com/privkey.pem > /opt/tuic/privkey.pem
 
 注意上面是两条指令，分别执行。
 
-**加载并启动tuic服务并设置开机自启：**
 
-```
-systemctl daemon-reload
-systemctl enable --now tuic.service
-```
 **禁用caddy运行http/3(默认)，解绑443/udp端口**
 
 ```
