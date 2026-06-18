@@ -37,18 +37,20 @@ mkdir /opt/tuic && cd /opt/tuic
 ```
 
 获取服务器端程序：
-因为最近作者一直在更新，版本更新比较快，所以去 [作者的库](https://github.com/EAimTY/tuic/releases)查看下最新版
+~~因为最近作者一直在更新，版本更新比较快，所以去 [作者的库](https://github.com/EAimTY/tuic/releases)查看下最新版~~
+直接通过命令和github发行档信息REST API获取最新版
+
 
 X86
 
 ```
-wget https://github.com/EAimTY/tuic/releases/download/tuic-server-1.0.0/tuic-server-1.0.0-x86_64-unknown-linux-gnu -O /opt/tuic/tuic-server
+wget https://github.com/EAimTY/tuic/releases/latest/download/$(curl -s https://api.github.com/repos/tuic-protocol/tuic/releases/latest | grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//; s/"//')-x86_64-unknown-linux-gnu -O /opt/tuic/tuic-server
 ```
 
 ARM
 
 ```
-wget https://github.com/EAimTY/tuic/releases/download/tuic-server-1.0.0/tuic-server-1.0.0-aarch64-unknown-linux-gnu -O /opt/tuic/tuic-server
+wget https://github.com/EAimTY/tuic/releases/latest/download/$(curl -s https://api.github.com/repos/tuic-protocol/tuic/releases/latest | grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//; s/"//')-aarch64-unknown-linux-gnu -O /opt/tuic/tuic-server
 ```
 
 赋予服务器端程序权限：
