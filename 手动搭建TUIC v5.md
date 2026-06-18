@@ -82,7 +82,7 @@ pass=$(openssl rand -base64 8)
 firstdomain=$(ls ~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory | head -n 1)
 cat << EOF >config.json
 {
-    "server": ":443",
+    "server": "[::]:443",
     "users": {
         "$uuid": "$pass"
     },
@@ -159,7 +159,8 @@ WantedBy=multi-user.target
 
 至此其实服务器端已经建立好了。如果你已经之前玩过trojan有证书的话就直接把证书放入到/opt/tuic 文件夹里按照上面的配置公钥命名为：fullchain.pem，私钥命名为：private.pem那么就已经完成了。如果没有的话就接着往下看，通过certbot申请证书吧
 
-**申请证书：**
+~~**申请证书：**~~
+用了caddy的证书，这一步省了
 
 ```
 certbot certonly \
@@ -184,9 +185,10 @@ cat /etc/letsencrypt/live/your.com/privkey.pem > /opt/tuic/privkey.pem
 
 注意上面是两条指令，分别执行。
 
-启动tuic服务并设置开机自启：
+**加载并启动tuic服务并设置开机自启：**
 
 ```
+systemctl daemon-reload
 systemctl enable --now tuic.service
 ```
 
