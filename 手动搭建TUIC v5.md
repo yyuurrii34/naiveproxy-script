@@ -44,13 +44,13 @@ mkdir /opt/tuic && cd /opt/tuic
 X86
 
 ```
-wget https://github.com/EAimTY/tuic/releases/latest/download/$(curl -s https://api.github.com/repos/tuic-protocol/tuic/releases/latest | grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//; s/"//')-x86_64-unknown-linux-gnu -O /opt/tuic/tuic-server
+wget https://github.com/tuic-protocol/tuic/releases/latest/download/$(curl -s https://api.github.com/repos/tuic-protocol/tuic/releases/latest | grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//; s/"//')-x86_64-unknown-linux-gnu -O /opt/tuic/tuic-server
 ```
 
 ARM
 
 ```
-wget https://github.com/EAimTY/tuic/releases/latest/download/$(curl -s https://api.github.com/repos/tuic-protocol/tuic/releases/latest | grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//; s/"//')-aarch64-unknown-linux-gnu -O /opt/tuic/tuic-server
+wget https://github.com/tuic-protocol/tuic/releases/latest/download/$(curl -s https://api.github.com/repos/tuic-protocol/tuic/releases/latest | grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//; s/"//')-aarch64-unknown-linux-gnu -O /opt/tuic/tuic-server
 ```
 
 赋予服务器端程序权限：
