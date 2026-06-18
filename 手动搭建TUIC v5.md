@@ -80,14 +80,16 @@ chmod +x /opt/tuic/tuic-server
 uuid=$(uuidgen)
 pass=$(openssl rand -base64 8)
 firstdomain=$(ls ~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory | head -n 1)
+/bin/cp -f ~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$firstdomain/$firstdomain.crt $firstdomain.crt && chmod 644 $firstdomain.crt
+/bin/cp -f ~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$firstdomain/$firstdomain.key $firstdomain.key && chmod 600 $firstdomain.key
 cat << EOF >config.json
 {
     "server": "[::]:443",
     "users": {
         "$uuid": "$pass"
     },
-    "certificate": "~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$firstdomain/$firstdomain.crt",
-    "private_key": "~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$firstdomain/$firstdomain.key",
+    "certificate": "./$firstdomain.crt",
+    "private_key": "./$firstdomain.key",
     "congestion_control": "bbr",
     "alpn": ["h3", "spdy/3.1"],
     "udp_relay_ipv6": true,
