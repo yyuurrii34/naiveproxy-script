@@ -38,6 +38,7 @@ mkdir /opt/tuic && cd /opt/tuic
 
 获取服务器端程序：
 ~~因为最近作者一直在更新，版本更新比较快，所以去 [作者的库](https://github.com/EAimTY/tuic/releases)查看下最新版~~
+
 直接通过命令和github发行档信息REST API获取最新版
 
 
@@ -71,22 +72,22 @@ chmod +x /opt/tuic/tuic-server
 
 **建立服务器端配置：**
 
-```
-nano config.json
-```
 
-（有些vps可能默认没有nano，那么就需要安装nano了，具体的方式可以自行搜索：nano 安装）
 
-写入如下配置：
+创建配置文件config.json：
 
 ```
+uuid=$(uuidgen)
+pass=$(openssl rand -base64 8)
+firstdomain=$(ls ~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory | head -n 1)
+cat << EOF >config.json
 {
-    "server": "[::]:52408",
+    "server": ":443",
     "users": {
-        "8e21e704-9ac8-4fb8-bef1-6c9d7d7e390b": "RnJ5BfJ3"
+        "$uuid": "$pass"
     },
-    "certificate": "/opt/tuic/fullchain.pem",
-    "private_key": "/opt/tuic/privkey.pem",
+    "certificate": "~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$firstdomain/$firstdomain.crt",
+    "private_key": "~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$firstdomain/$firstdomain.key",
     "congestion_control": "bbr",
     "alpn": ["h3", "spdy/3.1"],
     "udp_relay_ipv6": true,
@@ -98,7 +99,12 @@ nano config.json
     "gc_lifetime": "15s",
     "log_level": "warn"
 }
+EOF
+```
+**（查看配置文件记下uuid和pass）**
 
+```
+cat config.json
 ```
 
 **新建systemd配置文件**
