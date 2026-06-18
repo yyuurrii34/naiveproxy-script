@@ -193,6 +193,24 @@ cat /etc/letsencrypt/live/your.com/privkey.pem > /opt/tuic/privkey.pem
 systemctl daemon-reload
 systemctl enable --now tuic.service
 ```
+**禁用caddy运行http/3(默认)，解绑443/udp端口**
+
+```
+sed -i '1i\{\
+    servers {\
+        protocols h1 h2\
+    }\
+}' /etc/caddy/Caddy*
+systemctl restart caddy
+
+```
+
+**加载并启动tuic服务并设置开机自启：**
+
+```
+systemctl daemon-reload
+systemctl enable --now tuic.service
+```
 
 至此服务器端的配置已经全部完成了。你在surge配置里面就可以按照老刘提供的格式进行节点设置了，如下示意配置格式，1.1.1.1换成你的vps的IP，端口就是上面config.json里面设置的端口，password后面就是里面设置的密码，sni后面就是你的域名，uuid就是config.json里面user部分，可以自己去通过相应工具生成。
 
