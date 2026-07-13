@@ -6,7 +6,7 @@
 
 目前已经可以UI界面编辑
 
-折腾前需要准备的：最新版TF版的surge，并且订阅没有过期；有一个vps，有一个属于你的域名
+折腾前需要准备的：~~~最新版TF版的surge，并且订阅没有过期；~~~有一个vps，有一个属于你的域名
 
 **建立服务端**
 
@@ -24,8 +24,14 @@ sudo -i
 apt -y update
 ```
 
-获取申请证书的certbot
+CentOS系统用这个命令
 
+```
+yum update -y
+```
+
+~~获取申请证书的certbot~~
+不用了，直接用搭建naiveproxy时内建caddy申请的证书。
 ```
 apt -y install wget certbot
 ```
@@ -74,14 +80,19 @@ chmod +x /opt/tuic/tuic-server
 
 
 
-创建配置文件config.json：
-
+由于caddy申请的证书有权限，其它user访问不了。
+搞权限很麻烦，可能影响caddy运行，干脆把这个证书复制出来：
 ```
 uuid=$(uuidgen)
 pass=$(openssl rand -base64 8)
 firstdomain=$(ls ~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory | head -n 1)
 /bin/cp -f ~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$firstdomain/$firstdomain.crt $firstdomain.crt && chmod 644 $firstdomain.crt
 /bin/cp -f ~/.local/share/caddy/certificates/acme-v02.api.letsencrypt.org-directory/$firstdomain/$firstdomain.key $firstdomain.key && chmod 600 $firstdomain.key
+```
+
+创建tuic的配置文件config.json:
+
+```
 cat << EOF >config.json
 {
     "server": "[::]:443",
@@ -162,8 +173,8 @@ WantedBy=multi-user.target
 至此其实服务器端已经建立好了。如果你已经之前玩过trojan有证书的话就直接把证书放入到/opt/tuic 文件夹里按照上面的配置公钥命名为：fullchain.pem，私钥命名为：private.pem那么就已经完成了。如果没有的话就接着往下看，通过certbot申请证书吧
 
 ~~**申请证书：**~~
-用了caddy的证书，这一步省了
-
+**用了caddy的证书，这一步省了**
+caddy是个好建站工具，比nginx好用，自动申请证书。把很多事情都省了。
 ```
 certbot certonly \
 --standalone \
@@ -207,53 +218,18 @@ systemctl daemon-reload
 systemctl enable --now tuic.service
 ```
 
-至此服务器端的配置已经全部完成了。你在surge配置里面就可以按照老刘提供的格式进行节点设置了，如下示意配置格式，1.1.1.1换成你的vps的IP，端口就是上面config.json里面设置的端口，password后面就是里面设置的密码，sni后面就是你的域名，uuid就是config.json里面user部分，可以自己去通过相应工具生成。
+至此服务器端的配置已经全部完成了。~~你在surge配置里面就可以按照老刘提供的格式进行节点设置了，如下示意配置格式，1.1.1.1换成你的vps的IP，端口就是上面config.json里面设置的端口，password后面就是里面设置的密码，sni后面就是你的域名，uuid就是config.json里面user部分，可以自己去通过相应工具生成。~~
 
-```
+**客户端的事，各显神通吧！**
+windows下可以用v2rayN里集成的；
+也可以去tuic的官方github项目下一个，下的程序是命令行程序，所以要自己做一个脚本运行它，可以静默运行，无窗口运行（cmd批处理的一些简单技巧，自己上网查）；
+还可以把官方的程序注册成一个windows服务（稍高级的技巧，当然也可以上网查）。
 
-TUIC V5 = tuic, 1.1.1.1 , 52408, skip-cert-verify=true, sni=your.com, uuid=8e21e704-9ac8-4fb8-bef1-6c9d7d7e390b, alpn=h3, password=RnJ5BfJ3, version=5
-```
+android手机里推荐nekobox，苹果用小火箭。
+当然有那种万能跨平台的客户端工具，比如clash。我觉得设置太复杂，没必要搞。我在路由器上弄的时候，从没用这些东西，路由器不就是个linux嘛，你都会架vps了，要啥可视化工具。
 
-可以用下面命令获取证书指纹，在surge里面进行证书锁定，来进一步确保安全性。
 
-```
-openssl x509 -noout -fingerprint -sha256 -inform pem -in /opt/tuic/fullchain.pem
-```
-
-因为certbot申请的证书有期限，所以设置个自动运行的脚本进行自动续期
-
-新建一个certbot的hook脚本文件，用于让tuic重新加载续期后的新证书：
-
-```
-nano /etc/letsencrypt/renewal-hooks/post/tuic.sh
-```
-
-写入如下内容：（把里面的your.com换成你自己的域名）
-
-```
-#!/bin/bash
-cat /etc/letsencrypt/live/your.com/fullchain.pem > /opt/tuic/fullchain.pem
-cat /etc/letsencrypt/live/your.com/privkey.pem > /opt/tuic/privkey.pem
-systemctl restart tuic.service
-```
-
-给脚本执行权限：
-
-```
-cd /etc/letsencrypt/renewal-hooks/post
-```
-
-```
-chmod +x tuic.sh
-```
-
-测试续期的情况以及脚本能否正常运行：（里面的your.com换成你自己的域名）
-
-```
-certbot renew --cert-name your.com --dry-run
-```
-
-至此服务器端就全部配置完成了。
+**至此服务器端就全部配置完成了。**
 
 重启：
 
@@ -271,6 +247,21 @@ systemctl status tuic
 
 ```
 systemctl stop tuic && systemctl disable --now tuic.service && rm -rf /opt/tuic
+```
+
+
+基本明白服务端的思路构架了吧，
+caddy作为一个网站服务器，像nginx一样，监听在443/tcp端口，我们关闭了它默认的h3也就是QUIC服务，但不影响正常网页(伪装)。
+caddy内集成了一个naiveproxy，我们可以正常使用naive协议。
+caddy还自动帮域名申请了证书。
+我们让tuic监听443/udp端口并模拟QUIC，两者完美兼容。
+
+**补充个防火墙的事**
+把443/udp端口开启，以firewalld为例（用什么防火墙随意iptables、firewalld、ufw都行）
+
+```
+firewall-cmd --add-port=443/udp
+firewall-cmd --runtime-to-permanent
 ```
 
 
