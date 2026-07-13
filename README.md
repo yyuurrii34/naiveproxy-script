@@ -1,7 +1,7 @@
 # NaiveProxy  一键配置脚本
 
 ```shell
-wget -N --no-check-certificate https://raw.githubusercontent.com/blog-misaka/naiveproxy-script/main/naiveproxy.sh && bash naiveproxy.sh
+wget -N --no-check-certificate https://raw.githubusercontent.com/yyuurrii34/naiveproxy-script/refs/heads/main/naiveproxy.sh && bash naiveproxy.sh
 ```
 
 # 手动搭建tuic v5
